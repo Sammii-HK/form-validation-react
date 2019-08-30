@@ -16,16 +16,8 @@ class App extends React.Component {
     }
 
     this.handleChange = this.handleChange.bind(this)
-    // this.validateForm = this.validateForm.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
-
-  // validateForm(e) {
-  //   const errors = { ...this.state.errors, [e.target.name]: errors.message }
-  //   if (!this.state.email.includes('@')) {
-  //     errors.message = 'Invalid email address'
-  //   }
-  // }
 
   handleChange(e) {
     const data = { ...this.state.data, [e.target.name]: e.target.value } // merge data on state with new data from form
@@ -40,6 +32,7 @@ class App extends React.Component {
     // const errors = { ...this.state.errors, [e.target.name]: e.target.name.message }
     // this.setState({ errors })
 
+
     if (!this.state.data.email.includes('@')) {
       // e.target.name.message = 'Invalid email address'
       this.setState({
@@ -47,48 +40,30 @@ class App extends React.Component {
           email: 'Invalid email address'
         }
       })
+    } else if (isNaN(this.state.data.phone)) {
+      this.setState({
+        errors: {
+          phone: 'Invalid phone number'
+        }
+      })
     }
-
-    // this.validateForm()
-
-    // const errors = { ...this.state.errors, [e.target.name]: e.target.value }
-
-    // const validEmailRegex =
-    // RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-
-    // switch (e.target.name) {
-    //   case 'email':
-    //     errors.email = validEmailRegex.test(data.email) ? '' : 'Email is invalid'
-    //     break
-    // }
-
-
-
-    // if (e.target.value === null) {
-    //   const errors = { ...this.state.errors, [e.target.name]: e.target.value}
-    //   this.setState({ errors })
-    // }
   }
+
+  // const errors = { ...this.state.errors, [e.target.name]: e.target.name.message }
+  // this.setState({ errors })
 
   handleSubmit(e) {
     e.preventDefault()
-
-    console.log('errors', this.state.errors)
-
     const form = document.forms[0]
 
-    for (let i = 0; i < form.length; i++) {
-
-      console.log('required:', form.elements[i].required)
-
+    for (let i = 0; i < form.length - 1; i++) {
       if (form.elements[i].required === true && form.elements[i].value.length === 0) {
-        this.setState({
-          errors: {
-            [form.elements[i].name]: 'Field is required'
-          }
-        })
+        const errors = { ...this.state.errors, [form.elements[i].name]: `${form.elements[i].name} is required`}
+        this.setState({ errors })
       }
     }
+
+    console.log('errors', this.state.errors)
   }
 
 
@@ -99,6 +74,20 @@ class App extends React.Component {
           <div className="columns is-centered is-mobile">
             <div className="column is-6-desktop is-8-tablet is-10-mobile">
               <form onSubmit={this.handleSubmit} noValidate>
+                <div className="field">
+                  <label className="label">First Name</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      name="firstName"
+                      type="text"
+                      placeholder="Anne"
+                      required={true}
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  {this.state.errors.firstName && <div className="help is-danger">{this.state.errors.firstName}</div>}
+                </div>
                 <div className="field">
                   <label className="label">Email</label>
                   <div className="control">
@@ -112,6 +101,20 @@ class App extends React.Component {
                     />
                   </div>
                   {this.state.errors.email && <div className="help is-danger">{this.state.errors.email}</div>}
+                </div>
+                <div className="field">
+                  <label className="label">Phone</label>
+                  <div className="control">
+                    <input
+                      className="input"
+                      name="phone"
+                      type="number"
+                      placeholder="07283645835"
+                      required={true}
+                      onChange={this.handleChange}
+                    />
+                  </div>
+                  {this.state.errors.phone && <div className="help is-danger">{this.state.errors.phone}</div>}
                 </div>
 
                 <button
